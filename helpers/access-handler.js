@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const { db } = require('../config/firebase');
 
-const UserSimplesNacional = db.ref(`/${process.env.FIREBASE_ACCESS_TOKEN}/users-simples-nacional`);
+const User = db.ref(`/${process.env.FIREBASE_ACCESS_TOKEN}/users`);
 
 module.exports = (req, res, next) => {
   if (!req.query.token) {
@@ -21,7 +21,7 @@ module.exports = (req, res, next) => {
       });
     }
 
-    const currentUser = (await UserSimplesNacional.child(decoded.id).once('value')).val();
+    const currentUser = (await User.child(decoded.id).once('value')).val();
 
     res.locals.user = {
       id: decoded.id,

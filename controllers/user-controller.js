@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const { db, auth } = require('../config/firebase');
 
-const UserSimplesNacional = db.ref(`/${process.env.FIREBASE_ACCESS_TOKEN}/users-simples-nacional`);
+const User = db.ref(`/${process.env.FIREBASE_ACCESS_TOKEN}/users`);
 
 module.exports = {
   create: async (req, res, next) => {
@@ -18,7 +18,7 @@ module.exports = {
 
       auth.createUserWithEmailAndPassword(email, password)
         .then(async ({ user }) => {
-          await UserSimplesNacional.child(user.uid).set({
+          await User.child(user.uid).set({
             email,
             access: 0,
           });
@@ -77,7 +77,7 @@ module.exports = {
 
       console.log(res.locals.user);
 
-      const users = (await UserSimplesNacional.once('value')).val();
+      const users = (await User.once('value')).val();
 
       res.locals.data = users;
       next();
@@ -95,7 +95,7 @@ module.exports = {
         });
       }
 
-      const user = (await UserSimplesNacional.child(req.params.userId).once('value')).val();
+      const user = (await User.child(req.params.userId).once('value')).val();
 
       res.locals.data = user;
       next();
@@ -127,8 +127,8 @@ module.exports = {
         });
       }
 
-      await UserSimplesNacional.child(req.params.userId).update(req.body);
-      const user = (await UserSimplesNacional.child(req.params.userId).once('value')).val();
+      await User.child(req.params.userId).update(req.body);
+      const user = (await User.child(req.params.userId).once('value')).val();
 
       res.locals.data = user;
       next();
@@ -146,7 +146,7 @@ module.exports = {
         });
       }
 
-      await UserSimplesNacional.child(req.params.userId).remove();
+      await User.child(req.params.userId).remove();
 
       res.locals.data = {
         message: 'User removed',

@@ -18,10 +18,10 @@ router.route('/user/:userId')
   .delete(userController.remove)
   .all(requestHandler, errorHandler);
 
-router.route('/login')
+router.route('user/login')
   .post(userController.login, requestHandler, errorHandler);
 
-router.route('/reset-password')
+router.route('user/reset-password')
   .post(userController.resetPassword, requestHandler, errorHandler);
 
 module.exports = router;
