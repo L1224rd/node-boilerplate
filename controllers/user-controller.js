@@ -20,6 +20,7 @@ module.exports = {
         .then(async ({ user }) => {
           await UserSimplesNacional.child(user.uid).set({
             email,
+            access: 0,
           });
 
           res.locals.status = 201;
@@ -29,7 +30,9 @@ module.exports = {
               id: user.uid,
               email: user.email,
             },
-            token: jwt.sign({ id: user.uid }, process.env.JWT_TOKEN),
+            token: jwt.sign({
+              id: user.uid,
+            }, process.env.JWT_TOKEN, { expiresIn: 60 * 60 }),
           };
 
           next();
@@ -43,13 +46,15 @@ module.exports = {
   login: async (req, res, next) => {
     try {
       auth.signInWithEmailAndPassword(req.body.email, req.body.password)
-        .then(({ user }) => {
+        .then(async ({ user }) => {
           res.locals.data = {
             user: {
               id: user.uid,
               email: user.email,
             },
-            token: jwt.sign({ id: user.uid }, process.env.JWT_TOKEN),
+            token: jwt.sign({
+              id: user.uid,
+            }, process.env.JWT_TOKEN, { expiresIn: 60 * 60 }),
           };
 
           next();
@@ -62,6 +67,16 @@ module.exports = {
   },
   list: async (req, res, next) => {
     try {
+      if (res.locals.user.access < 10) {
+        res.locals.status = 403;
+
+        return next({
+          message: 'Permission denied',
+        });
+      }
+
+      console.log(res.locals.user);
+
       const users = (await UserSimplesNacional.once('value')).val();
 
       res.locals.data = users;
@@ -72,6 +87,14 @@ module.exports = {
   },
   detail: async (req, res, next) => {
     try {
+      if (res.locals.user.access < 10 && res.locals.user.id !== req.params.userId) {
+        res.locals.status = 403;
+
+        return next({
+          message: 'Permission denied',
+        });
+      }
+
       const user = (await UserSimplesNacional.child(req.params.userId).once('value')).val();
 
       res.locals.data = user;
@@ -82,6 +105,14 @@ module.exports = {
   },
   update: async (req, res, next) => {
     try {
+      if (res.locals.user.access < 10 && res.locals.user.id !== req.params.userId) {
+        res.locals.status = 403;
+
+        return next({
+          message: 'Permission denied',
+        });
+      }
+
       if (req.body.email) {
         res.locals.status = 403;
         return next({
@@ -107,6 +138,14 @@ module.exports = {
   },
   remove: async (req, res, next) => {
     try {
+      if (res.locals.user.access < 10 && res.locals.user.id !== req.params.userId) {
+        res.locals.status = 403;
+
+        return next({
+          message: 'Permission denied',
+        });
+      }
+
       await UserSimplesNacional.child(req.params.userId).remove();
 
       res.locals.data = {

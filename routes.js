@@ -5,8 +5,6 @@ const errorHandler = require('./helpers/error-handler');
 const accessHandler = require('./helpers/access-handler');
 
 const userController = require('./controllers/user-controller');
-// const sessionController = require('./controllers/sessionController');
-// const empresaController = require('./controllers/empresaController');
 
 router.route('/user')
   .post(userController.create)
