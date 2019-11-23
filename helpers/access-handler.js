@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
     });
   }
 
-  jwt.verify(req.query.token, process.env.JWT_TOKEN, async (error, decoded) => {
+  jwt.verify(req.query.token, process.env.JWT_SECRET, async (error, decoded) => {
     if (error) {
       console.log(error);
       res.locals.status = 401;

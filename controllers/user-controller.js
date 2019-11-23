@@ -32,7 +32,7 @@ module.exports = {
             },
             token: jwt.sign({
               id: user.uid,
-            }, process.env.JWT_TOKEN, { expiresIn: 60 * 60 }),
+            }, process.env.JWT_SECRET, { expiresIn: 60 * 60 }),
           };
 
           next();
@@ -54,7 +54,7 @@ module.exports = {
             },
             token: jwt.sign({
               id: user.uid,
-            }, process.env.JWT_TOKEN, { expiresIn: 60 * 60 }),
+            }, process.env.JWT_SECRET, { expiresIn: 60 * 60 }),
           };
 
           next();
