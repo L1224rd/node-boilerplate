@@ -11,6 +11,12 @@ router.route('/user')
   .get(accessHandler, userController.list)
   .all(requestHandler, errorHandler);
 
+router.route('/login')
+  .post(userController.login, requestHandler, errorHandler);
+
+router.route('/reset-password')
+  .post(userController.resetPassword, requestHandler, errorHandler);
+
 router.route('/user/:userId')
   .all(accessHandler)
   .get(userController.detail)
@@ -18,10 +24,5 @@ router.route('/user/:userId')
   .delete(userController.remove)
   .all(requestHandler, errorHandler);
 
-router.route('user/login')
-  .post(userController.login, requestHandler, errorHandler);
-
-router.route('user/reset-password')
-  .post(userController.resetPassword, requestHandler, errorHandler);
 
 module.exports = router;
